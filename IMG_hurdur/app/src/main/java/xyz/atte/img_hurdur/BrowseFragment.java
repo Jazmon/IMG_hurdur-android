@@ -18,12 +18,7 @@ public class BrowseFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<ContactInfo> mContactInfoList;
-
-    private enum LayoutManagerType {
-        GRID_LAYOUT_MANAGER,
-        LINEAR_LAYOUT_MANAGER
-    }
+    private List<ImageCardData> mImageCardDataList;
 
     public BrowseFragment() {
     }
@@ -41,7 +36,6 @@ public class BrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
         rootView.setTag(TAG);
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
@@ -55,7 +49,7 @@ public class BrowseFragment extends Fragment {
 
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(mContactInfoList);
+        mAdapter = new MyAdapter(mImageCardDataList);
         mRecyclerView.setAdapter(mAdapter);
 
         // Inflate the layout for this fragment
@@ -63,9 +57,11 @@ public class BrowseFragment extends Fragment {
     }
 
     private void initDataSet() {
-        mContactInfoList = new LinkedList<>();
-        mContactInfoList.add(new ContactInfo("Foo", "Bar", "baz@foo.com"));
-        mContactInfoList.add(new ContactInfo("Foo", "Bar", "baz@foo.com"));
-        mContactInfoList.add(new ContactInfo("Foo", "Bar", "baz@foo.com"));
+        mImageCardDataList = new LinkedList<>();
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
     }
 }
