@@ -1,7 +1,5 @@
 package xyz.atte.img_hurdur;
 
-import android.media.Image;
-
 /**
  * Created by Atte on 20.4.2016.
  */
