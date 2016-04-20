@@ -15,7 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class BrowseFragment extends Fragment {
+
+public class    BrowseFragment extends Fragment {
+
     private static final String TAG = "BrowseFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
