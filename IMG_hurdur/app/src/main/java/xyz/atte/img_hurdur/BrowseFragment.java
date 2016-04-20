@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class BrowseFragment extends Fragment {
+public class    BrowseFragment extends Fragment {
     public BrowseFragment() {
         // Required empty public constructor
     }
