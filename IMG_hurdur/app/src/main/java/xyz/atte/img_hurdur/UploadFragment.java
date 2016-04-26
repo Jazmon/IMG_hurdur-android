@@ -58,8 +58,10 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        /*
         mCameraPictureView = (ImageView) getActivity().findViewById(R.id.mCameraPreviewImage);
         mTakePictureButton = (Button)getActivity().findViewById(R.id.mTakePhotoButton);
         mTakePictureButton.setOnClickListener(this);
+        */
     }
 }

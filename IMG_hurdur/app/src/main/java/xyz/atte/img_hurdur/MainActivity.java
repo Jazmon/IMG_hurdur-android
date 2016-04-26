@@ -1,5 +1,7 @@
 package xyz.atte.img_hurdur;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,11 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -32,6 +35,20 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(this,ImageUploadActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FloatingActionButton myFab = (FloatingActionButton)  findViewById(R.id.myFAB);
+        myFab.setOnClickListener(this);
 
     }
 
