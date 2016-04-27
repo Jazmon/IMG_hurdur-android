@@ -7,12 +7,14 @@ public class ImageCardData {
     protected int imageResourceId;
     protected String title;
     protected String description;
+    protected String imageId;
 
 
-    public ImageCardData(int imageResourceId, String title, String description) {
+    public ImageCardData(int imageResourceId, String title, String description, String imageId) {
         this.imageResourceId = imageResourceId;
         this.title = title;
         this.description = description;
+        this.imageId = imageId;
     }
 
     public ImageCardData() {
