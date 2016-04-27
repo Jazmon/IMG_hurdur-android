@@ -34,8 +34,10 @@ public class HttpUpload extends AsyncTask<Void,Void,String> {
     protected String mImgDescription;
 
 
-
-    public HttpUpload(Context context, String mImgPath, String mImgTitle, String mImgDescription) {
+    public HttpUpload(Context context,
+                      String mImgPath,
+                      String mImgTitle,
+                      String mImgDescription) {
         super();
         this.context = context;
         this.mImgPath = mImgPath;
@@ -53,13 +55,14 @@ public class HttpUpload extends AsyncTask<Void,Void,String> {
     protected String doInBackground(Void... voids) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
         //compress the image to jpg format
         mImg.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
 
         //Encode image to Base64
         String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
 
-        //generate hashMap to store encodedImage and the name
+        //generate hashMap to store encodedImage,title and description.
         HashMap<String,String> detail = new HashMap<>();
         detail.put("title", mImgTitle);
         detail.put("image", encodedImage);
@@ -86,10 +89,11 @@ public class HttpUpload extends AsyncTask<Void,Void,String> {
         boolean first = true;
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (first)
+                if (first) {
                     first = false;
-                else
+                } else {
                     result.append("&");
+                }
 
                 result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                 result.append("=");
@@ -106,9 +110,11 @@ public class HttpUpload extends AsyncTask<Void,Void,String> {
         try {
             URL url = new URL(serverUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
             //set timeout of 30 seconds
             con.setConnectTimeout(1000 * 30);
             con.setReadTimeout(1000 * 30);
+
             //Http-method
             con.setRequestMethod("POST");
             con.setDoOutput(true);

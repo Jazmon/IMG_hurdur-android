@@ -15,9 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-
-public class    BrowseFragment extends Fragment {
-
+public class BrowseFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "BrowseFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -31,6 +29,7 @@ public class    BrowseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
         initDataSet();
 
@@ -43,6 +42,11 @@ public class    BrowseFragment extends Fragment {
         // ...
 
         // Load complete
+       /* try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+
+        }*/
         onItemsLoadComplete();
     }
 
@@ -58,6 +62,7 @@ public class    BrowseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
         rootView.setTag(TAG);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
@@ -68,7 +73,7 @@ public class    BrowseFragment extends Fragment {
                 refreshItems();
             }
         });
-        mSwipeRefreshLayout.setEnabled(false);
+        //mSwipeRefreshLayout.setEnabled(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
         // use this setting to improve performance if you know that changes
@@ -96,11 +101,17 @@ public class    BrowseFragment extends Fragment {
     }
 
     private void initDataSet() {
+        Log.d(TAG, "initDataSet");
         mImageCardDataList = new LinkedList<>();
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
+        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
