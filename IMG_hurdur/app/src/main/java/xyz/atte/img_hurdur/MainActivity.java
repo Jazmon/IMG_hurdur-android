@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         Log.d(TAG, "BAR");
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.commentsButton, new CommentsFragment(), "fragment_comments");
+        ft.replace(R.id.recyclerView, new CommentsFragment());
+        ft.addToBackStack(null);
         ft.commit();
 
     }

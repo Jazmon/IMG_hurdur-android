@@ -44,15 +44,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, v.getContext().toString());
+                    Log.d(TAG, "CLICK");
                     Log.d(TAG, foo.getContext().toString());
                     if ((c = foo.getContext()) instanceof RecyclerViewItemClick) {
                         ((RecyclerViewItemClick) c).onItemClick();
                         Log.d(TAG, "FOO");
                     }
-                    Log.d(TAG, "CLICK");
-                    // FragmentManager fm = getFragmentManager();
-                    //MainActivity.this.getFragmentManager()
                 }
             });
         }
