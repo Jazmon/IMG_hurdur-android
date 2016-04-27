@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class UploadFragment extends Fragment implements View.OnClickListener{
+public class UploadFragment extends Fragment implements View.OnClickListener {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private ImageView mCameraPictureView;
@@ -60,7 +60,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
         /*
         mCameraPictureView = (ImageView) getActivity().findViewById(R.id.mCameraPreviewImage);
-        mTakePictureButton = (Button)getActivity().findViewById(R.id.mTakePhotoButton);
+        mTakePictureButton = (Button) getActivity().findViewById(R.id.mTakePhotoButton);
         mTakePictureButton.setOnClickListener(this);
         */
     }

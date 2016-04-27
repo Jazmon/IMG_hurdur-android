@@ -6,6 +6,6 @@
     <color name="windowBackground">#303030</color>
     <color name="navigationBarColor">#212121</color>
     <color name="colorAccent">#c8e8ff</color>
-    <color name="bkg_card">#18ffff</color>
+    <color name="color_tint">#9c000000</color>
 </resources>
 
