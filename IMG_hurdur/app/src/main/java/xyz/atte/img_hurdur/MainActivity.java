@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new BrowseFragment(), "BROWSE PICTURES");
-        adapter.addFragment(new UploadFragment(), "TAKE A PICTURE");
         viewPager.setAdapter(adapter);
     }
 
