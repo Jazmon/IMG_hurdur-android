@@ -2,7 +2,6 @@ package xyz.atte.img_hurdur;
 
 
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,11 +41,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             vCommentsButton.setOnClickListener(new View.OnClickListener() {
                 Context c;
+
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, v.getContext().toString());
                     Log.d(TAG, foo.getContext().toString());
-                    if((c = foo.getContext()) instanceof RecyclerViewItemClick) {
+                    if ((c = foo.getContext()) instanceof RecyclerViewItemClick) {
                         ((RecyclerViewItemClick) c).onItemClick();
                         Log.d(TAG, "FOO");
                     }

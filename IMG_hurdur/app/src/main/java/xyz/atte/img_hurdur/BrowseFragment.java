@@ -15,12 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-<<<<<<< Updated upstream
-public class BrowseFragment extends Fragment {
-=======
 public class BrowseFragment extends Fragment implements View.OnClickListener {
-
->>>>>>> Stashed changes
     private static final String TAG = "BrowseFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -70,7 +65,6 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
         rootView.setTag(TAG);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Created by MikkoEPIC on 20.4.2016.
  */
-public class HttpUpload extends AsyncTask<Void, Void, String> {
+public class HttpUpload extends AsyncTask<Void,Void,String> {
 
     private final String TAG = this.getClass().getSimpleName();
     protected String mServerUrl;
@@ -34,7 +34,10 @@ public class HttpUpload extends AsyncTask<Void, Void, String> {
     protected String mImgDescription;
 
 
-    public HttpUpload(Context context, String mImgPath, String mImgTitle, String mImgDescription) {
+    public HttpUpload(Context context,
+                      String mImgPath,
+                      String mImgTitle,
+                      String mImgDescription) {
         super();
         this.context = context;
         this.mImgPath = mImgPath;
@@ -52,43 +55,45 @@ public class HttpUpload extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
         //compress the image to jpg format
-        mImg.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        mImg.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
 
         //Encode image to Base64
-        String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+        String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
 
-        //generate hashMap to store encodedImage and the name
-        HashMap<String, String> detail = new HashMap<>();
+        //generate hashMap to store encodedImage,title and description.
+        HashMap<String,String> detail = new HashMap<>();
         detail.put("title", mImgTitle);
         detail.put("image", encodedImage);
-        detail.put("description", mImgDescription);
+        detail.put("description",mImgDescription);
 
-        try {
+        try{
             //convert this HashMap to encodedUrl
             String dataToSend = hashMapToUrl(detail);
             //make a Http request and send data
-            String response = post(mServerUrl, dataToSend);
+            String response = post(mServerUrl,dataToSend);
 
             //return the response
             return response;
 
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
-            Log.e(TAG, "ERROR  " + e);
+            Log.e(TAG,"ERROR  "+e);
             return null;
         }
     }
 
-    private String hashMapToUrl(HashMap<String, String> params) {
+    private String hashMapToUrl(HashMap<String, String> params){
         StringBuilder result = new StringBuilder();
         boolean first = true;
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (first)
+                if (first) {
                     first = false;
-                else
+                } else {
                     result.append("&");
+                }
 
                 result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                 result.append("=");
@@ -101,19 +106,21 @@ public class HttpUpload extends AsyncTask<Void, Void, String> {
         return result.toString();
     }
 
-    public String post(String serverUrl, String dataToSend) {
+    public String post(String serverUrl,String dataToSend) {
         try {
             URL url = new URL(serverUrl);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
             //set timeout of 30 seconds
             con.setConnectTimeout(1000 * 30);
             con.setReadTimeout(1000 * 30);
+
             //Http-method
             con.setRequestMethod("POST");
             con.setDoOutput(true);
 
             OutputStream os = con.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
 
             //make request
             writer.write(dataToSend);
@@ -124,7 +131,7 @@ public class HttpUpload extends AsyncTask<Void, Void, String> {
             //get the response
             int responseCode = con.getResponseCode();
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if(responseCode == HttpURLConnection.HTTP_OK){
                 //read the response
                 StringBuilder sb = new StringBuilder();
 
@@ -133,14 +140,14 @@ public class HttpUpload extends AsyncTask<Void, Void, String> {
                 String line;
 
                 //loop through the response from the server
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null){
                     sb.append(line).append("\n");
                 }
 
                 //return the response
                 return sb.toString();
-            } else {
-                Log.e(TAG, "ERROR - Invalid response code from server " + responseCode);
+            }else{
+                Log.e(TAG,"ERROR - Invalid response code from server "+ responseCode);
                 return null;
             }
 

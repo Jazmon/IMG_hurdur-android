@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/CardView.Dark">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:id="@+id/mMenuBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/uploadToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:id="@+id/mCameraPreviewImage"
+        android:nestedScrollingEnabled="false"
+        android:layout_below="@+id/mMenuBar"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Image title:"
+        android:id="@+id/mTitleLable"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/mDescriptionLable" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Description:"
+        android:id="@+id/mDescriptionLable"
+        android:layout_marginTop="42dp"
+        android:layout_below="@+id/mImageTitleTextField"
+        android:layout_toStartOf="@+id/mDescriptionTextField" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/mDescriptionTextField"
+        android:text="Write some description for image"
+        android:backgroundTint="#929090"
+        android:background="#000000"
+        android:layout_alignTop="@+id/mDescriptionLable"
+        android:layout_alignStart="@+id/mUploadImageButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Image"
+        android:id="@+id/mUploadImageButton"
+        android:layout_below="@+id/mDescriptionTextField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="52dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/mImageTitleTextField"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/mDescriptionTextField" />
+
+</RelativeLayout>
+
+
+
