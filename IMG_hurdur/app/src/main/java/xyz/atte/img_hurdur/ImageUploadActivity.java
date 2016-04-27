@@ -1,17 +1,20 @@
 package xyz.atte.img_hurdur;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -21,11 +24,13 @@ import java.util.Date;
 
 public class ImageUploadActivity extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private  final String TAG = getClass().getSimpleName();
+    private static final int MULTIPLE_PERMISSION_CODE = 12;
+    private static final int IMAGE_CAPTURE_PERMISSION_REQUEST_ID = 2;
+    private final String TAG = getClass().getSimpleName();
     private ImageView mCameraPictureView;
     //private Button mTakePictureButton;
     protected String mCurrentPhotoPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +51,30 @@ public class ImageUploadActivity extends AppCompatActivity {
         });
 
         mCameraPictureView = (ImageView) findViewById(R.id.mCameraPreviewImage);
-        Log.d(TAG,String.valueOf(mCameraPictureView.getWidth()) + " " + String.valueOf(mCameraPictureView.getHeight()));
+        getPermissions();
+        Log.d(TAG, String.valueOf(mCameraPictureView.getWidth()) + " " + String.valueOf(mCameraPictureView.getHeight()));
         //mTakePictureButton = (Button) findViewById(R.id.mTakePhotoButton);
 
-        dispatchTakePictureIntent();
+
+
+    }
+
+    private void getPermissions() {
+
+        // Ask external storage write permission
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.CAMERA},
+                        MULTIPLE_PERMISSION_CODE);
+        } else {
+            dispatchTakePictureIntent();
+        }
+
     }
 
     private void dispatchTakePictureIntent() {
@@ -67,7 +92,7 @@ public class ImageUploadActivity extends AppCompatActivity {
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, IMAGE_CAPTURE_PERMISSION_REQUEST_ID);
             }
         }
     }
@@ -75,12 +100,12 @@ public class ImageUploadActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        Log.d(TAG,timeStamp);
+        Log.d(TAG, timeStamp);
         String imageFileName = "JPEG_" + timeStamp + "_";
-        Log.d(TAG,imageFileName + ".jpg");
+        Log.d(TAG, imageFileName + ".jpg");
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        Log.d(TAG,storageDir+imageFileName + ".jpg");
+        Log.d(TAG, storageDir + imageFileName + ".jpg");
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -89,7 +114,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG,image.getAbsolutePath());
+        Log.d(TAG, image.getAbsolutePath());
         return image;
     }
 
@@ -120,9 +145,28 @@ public class ImageUploadActivity extends AppCompatActivity {
         mCameraPictureView.setImageBitmap(bitmap);
     }
 
-        @Override
-    protected void onStart() {
-        super.onStart();
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MULTIPLE_PERMISSION_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    dispatchTakePictureIntent();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
