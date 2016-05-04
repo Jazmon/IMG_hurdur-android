@@ -381,9 +381,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             URL url = null;
             try {
-                Log.d(TAG, "doInBackground: url");
                 url = new URL("http://192.168.0.100:8000/auth/login");
-                Log.d(TAG, "doInBackground: url set");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -395,9 +393,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             Bundle data = new Bundle();
 
             try {
-                Log.d(TAG, "doInBackground: setting up connection");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                Log.d(TAG, "doInBackground: connection set up");
                 conn.setReadTimeout(10_000);
                 conn.setConnectTimeout(15_000);
                 conn.setRequestMethod("POST");
