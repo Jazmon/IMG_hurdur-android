@@ -17,7 +17,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewItemClick, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewItemClick{
     private static final String TAG = "MainActivity";
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -39,23 +39,25 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
 
     }
 
-    @Override
-    public void onClick(View view) {
-        Intent intent = new Intent(this, ImageUploadActivity.class);
-        startActivity(intent);
-    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
-        myFab.setOnClickListener(this);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ImageUploadActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new BrowseFragment(), "BROWSE PICTURES");
+        adapter.addFragment(new RootFragment(), "BROWSE PICTURES");
         viewPager.setAdapter(adapter);
     }
 
@@ -64,10 +66,39 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         Log.d(TAG, "BAR");
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.recyclerView, new CommentsFragment());
+
+        /*
+        //create fragment
+        CommentsFragment commentsFragment = new CommentsFragment();
+
+        //add comments to args bundle
+        Bundle args = new Bundle();
+        args.putStringArray("comments",);
+        commentsFragment.setArguments(args);
+        */
+
+        ft.replace(R.id.root_frame, new CommentsFragment());
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.addToBackStack(null);
         ft.commit();
 
+    }
+
+    public void showBackButton() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Show back button on toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Add listener to the back button in toolbar
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+        });
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -80,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
 
         @Override
         public Fragment getItem(int position) {
+
             return mFragmentList.get(position);
         }
 

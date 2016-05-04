@@ -3,12 +3,14 @@ package xyz.atte.img_hurdur;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Atte on 27.4.2016.
@@ -16,7 +18,12 @@ import java.util.List;
 public class CommentsFragment extends Fragment {
     private static final String TAG = "CommentsView";
 
-    //private List<CommentData> mCommentsDataList;
+    private ArrayList<CommentData> mCommentsDataList;
+    CommentsAdapter adapter;
+    private String [] comments;
+
+
+    private ListView mListView;
 
     public CommentsFragment() {
 
@@ -26,24 +33,61 @@ public class CommentsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       // initDataSet();
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.comments, container, false);
-        //rootView.setTag(TAG);
-
-        //ml
+        rootView.setTag(TAG);
+        initDataSet();
         return rootView;
     }
 
-    /*private void initDataSet() {
-        mCommentsDataList = new LinkedList<>();
-        mCommentsDataList.add(new CommentData("Hello max!", "1234", "Foobar", null));
-        mCommentsDataList.add(new CommentData("Yolo!", "1244", "Per Kunter", null));
-        mCommentsDataList.add(new CommentData("SUKA BLYAT!", "1434", "Peter", null));
+    protected void getCommentsFromServer() {
+        //TODO
+    }
 
-    }*/
+    protected void postCommentToServer() {
+        //TODO
+
+
+        //After posting the comment refresh comments from the server
+        getCommentsFromServer();
+    }
+
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.d("did","diidis");
+        ((MainActivity)getActivity()).showBackButton();
+
+        super.onViewCreated(view, savedInstanceState);
+        mListView = (ListView) view.findViewById(R.id.commentListView);
+
+        adapter = new CommentsAdapter(getActivity(),mCommentsDataList);
+        mListView.setAdapter(adapter);
+
+
+
+        Button button = (Button) view.findViewById(R.id.postCommentButton);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                postCommentToServer();
+            }
+        });
+    }
+
+    private void initDataSet() {
+        mCommentsDataList = new ArrayList<>();
+        mCommentsDataList.add(new CommentData("Tän pitää olla ihan helvetin pitkä kommentti että voin testaa näyttääkö app:issa paskalta", "1234", "Foobar", null));
+        mCommentsDataList.add(new CommentData("Atte haista vittu t.kikkihiiri", "1244", "Per Kunter", null));
+        mCommentsDataList.add(new CommentData("#androidkoodaus / 5", "1434", "Peter", null));
+
+    }
 }
