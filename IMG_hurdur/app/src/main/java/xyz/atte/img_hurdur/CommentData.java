@@ -22,4 +22,9 @@ public class CommentData {
     public CommentData() {
 
     }
+
+    @Override
+    public String toString() {
+        return userName;
+    }
 }
