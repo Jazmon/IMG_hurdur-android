@@ -2,6 +2,9 @@ package xyz.atte.img_hurdur;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.NetworkOnMainThreadException;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +14,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -80,7 +85,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         ImageCardData cardData = imageCardDataList.get(position);
-        holder.vImageView.setImageResource(cardData.imageResourceId);
+        holder.vImageView.setImageBitmap(cardData.image);
         holder.vTitle.setText(cardData.title);
         holder.vDescription.setText(cardData.description);
 

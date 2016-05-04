@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewItemClick{
@@ -22,11 +23,20 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    protected String mToken;
+    protected Date mTokenExpires;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            mToken = extras.getString("token");
+            mTokenExpires = new Date(extras.getInt("expiresIn"));
+            Log.d(TAG, "onCreate: mToken:" + mToken);
+        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
