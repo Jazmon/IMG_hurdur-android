@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -84,15 +85,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         ImageCardData cardData = imageCardDataList.get(position);
-        Bitmap bitmap = null;
-        Log.d(TAG, "onBindViewHolder: cardData.imageUrl: " + cardData.imageUrl);
-        try {
-            bitmap = BitmapFactory.decodeStream(cardData.imageUrl.openConnection().getInputStream());
-        } catch (IOException | NetworkOnMainThreadException e) {
-            //e.printStackTrace();
-            Log.e(TAG, "onBindViewHolder: failed to get image from url", e);
-        }
-        holder.vImageView.setImageBitmap(bitmap);
+        holder.vImageView.setImageBitmap(cardData.image);
         holder.vTitle.setText(cardData.title);
         holder.vDescription.setText(cardData.description);
 

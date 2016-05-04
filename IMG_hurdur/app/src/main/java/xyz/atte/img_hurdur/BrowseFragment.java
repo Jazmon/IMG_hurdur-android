@@ -127,27 +127,29 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+        int index;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
+        public DownloadImageTask(int index) {
+            this.index = index;
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+            String url = urls[0];
+            Bitmap bitmap = null;
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                InputStream in = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
-            return mIcon11;
+            return bitmap;
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            mImageCardDataList.get(index).image = result;
+            mAdapter.notifyItemChanged(index);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -229,10 +231,12 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Bitmap bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ALPHA_8);
+
                         ImageCardData cardData =
                                 new ImageCardData(
-                                        new URL("http://192.168.0.100:8000/uploads/"
-                                                + jsonObject.getString("uploadPath")),
+                                        jsonObject.getString("uploadPath"),
+                                        bitmap,
                                         jsonObject.getString("title"),
                                         jsonObject.getString("description"),
                                         jsonObject.getString("_id"));
@@ -287,8 +291,14 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             mAdapter.notifyItemRemoved(pos);
             mAdapter.notifyItemRangeChanged(pos, mImageCardDataList.size());*/
             //mAdapter.notifyDataSetChanged();
-            for (ImageCardData cardData : list) {
+            /*for (ImageCardData cardData : list) {
                 mImageCardDataList.add(cardData);
+            }*/
+
+            for (int i = 0; i < list.size(); i++) {
+                ImageCardData data = list.get(i);
+                mImageCardDataList.add(data);
+                new DownloadImageTask(i).execute("http://192.168.0.100:8000/uploads/" + data.path);
             }
             //mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "bar123"));
             //mAdapter.notifyDataSetChanged();
