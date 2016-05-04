@@ -2,6 +2,8 @@ package xyz.atte.img_hurdur;
 
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -61,7 +65,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
     private void onItemsLoadComplete() {
         // Update the adapter and notify data set changed
         mImageCardDataList.clear();
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "foobar123"));
+       // mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "foobar123"));
         Log.d(TAG, "onItemsLoadComplete");
 
         // Stop refresh animation
@@ -121,6 +125,32 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
     }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
+
 
     private class GetImagesTask extends AsyncTask<Void, Void, List<ImageCardData>> {
         private static final String TAG = "GetImagesTask";
@@ -201,7 +231,8 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         ImageCardData cardData =
                                 new ImageCardData(
-                                        R.drawable.corgi,
+                                        new URL("http://192.168.0.100:8000/uploads/"
+                                                + jsonObject.getString("uploadPath")),
                                         jsonObject.getString("title"),
                                         jsonObject.getString("description"),
                                         jsonObject.getString("_id"));
@@ -259,7 +290,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             for (ImageCardData cardData : list) {
                 mImageCardDataList.add(cardData);
             }
-            mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "bar123"));
+            //mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "bar123"));
             //mAdapter.notifyDataSetChanged();
 
             mRecyclerView.removeAllViews();
