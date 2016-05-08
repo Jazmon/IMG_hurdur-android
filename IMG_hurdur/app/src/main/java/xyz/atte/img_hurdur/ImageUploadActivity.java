@@ -26,6 +26,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private static final int MULTIPLE_PERMISSION_CODE = 12;
     private static final int IMAGE_CAPTURE_PERMISSION_REQUEST_ID = 2;
+    File photoFile;
     private final String TAG = getClass().getSimpleName();
     private ImageView mCameraPictureView;
     //private Button mTakePictureButton;
@@ -59,6 +60,12 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     }
 
+    public void uploadImage(View v) {
+        Log.d(TAG,"upload");
+        //Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+        new HttpUpload(this,mCurrentPhotoPath,"test title","this is test description",photoFile).execute();
+    }
+
     private void getPermissions() {
 
         // Ask external storage write permission
@@ -82,7 +89,7 @@ public class ImageUploadActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
+            photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {

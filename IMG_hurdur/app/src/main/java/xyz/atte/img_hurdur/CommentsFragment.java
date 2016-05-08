@@ -61,7 +61,6 @@ public class CommentsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Log.d("did","diidis");
         ((MainActivity)getActivity()).showBackButton();
 
         super.onViewCreated(view, savedInstanceState);

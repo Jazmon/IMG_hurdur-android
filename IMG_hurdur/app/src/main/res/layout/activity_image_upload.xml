@@ -72,7 +72,8 @@
         android:id="@+id/mUploadImageButton"
         android:layout_marginTop="54dp"
         android:layout_below="@+id/mDescriptionTextField"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="uploadImage" />
 
     <EditText
         android:layout_width="wrap_content"
