@@ -83,11 +83,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String mUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
+        mUrl = getResources().getString(R.string.host_name);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -381,7 +383,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             URL url = null;
             try {
-                url = new URL("http://192.168.0.100:8000/auth/login");
+                url = new URL(mUrl + "/auth/login");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
