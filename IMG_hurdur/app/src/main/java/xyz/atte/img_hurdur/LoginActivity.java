@@ -381,7 +381,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             URL url = null;
             try {
-                url = new URL("http://192.168.0.100:8000/auth/login");
+                url = new URL("http://pulivari.xyz/auth/login");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

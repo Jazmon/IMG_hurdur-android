@@ -198,7 +198,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             List<ImageCardData> list = new LinkedList<>();
             URL url = null;
             try {
-                url = new URL("http://192.168.0.100:8000/api/image");
+                url = new URL("http://pulivari.xyz/api/image");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -298,7 +298,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             for (int i = 0; i < list.size(); i++) {
                 ImageCardData data = list.get(i);
                 mImageCardDataList.add(data);
-                new DownloadImageTask(i).execute("http://192.168.0.100:8000/uploads/" + data.path);
+                new DownloadImageTask(i).execute("http://pulivari.xyz/uploads/" + data.path);
             }
             //mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "bar123"));
             //mAdapter.notifyDataSetChanged();
