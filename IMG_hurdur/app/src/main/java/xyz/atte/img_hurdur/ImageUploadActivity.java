@@ -62,7 +62,6 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     public void uploadImage(View v) {
         Log.d(TAG,"upload");
-        //Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
         new HttpUpload(this,mCurrentPhotoPath,"test title","this is test description",photoFile).execute();
     }
 
@@ -157,13 +156,5 @@ public class ImageUploadActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setPic();
-        /*
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mCameraPictureView.setImageBitmap(imageBitmap);
-        } */
-
-
     }
 }

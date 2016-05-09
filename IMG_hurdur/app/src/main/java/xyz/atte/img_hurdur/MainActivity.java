@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
-        /*
-        //create fragment
+
+        /*//create fragment
         CommentsFragment commentsFragment = new CommentsFragment();
 
         //add comments to args bundle
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         args.putStringArray("comments",);
         commentsFragment.setArguments(args);
         */
+
 
         ft.replace(R.id.root_frame, new CommentsFragment());
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

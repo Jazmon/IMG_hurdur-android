@@ -147,6 +147,8 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
         }
 
         protected void onPostExecute(Bitmap result) {
+            Log.d(TAG,String.valueOf(index) + "@ onPostExecute");
+            Log.d(TAG,String.valueOf(mImageCardDataList.size()));
             mImageCardDataList.get(index).image = result;
             mAdapter.notifyItemChanged(index);
             mAdapter.notifyDataSetChanged();

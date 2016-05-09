@@ -84,9 +84,9 @@ public class CommentsFragment extends Fragment {
 
     private void initDataSet() {
         mCommentsDataList = new ArrayList<>();
-        mCommentsDataList.add(new CommentData("Tän pitää olla ihan helvetin pitkä kommentti että voin testaa näyttääkö app:issa paskalta", "1234", "Foobar", null));
-        mCommentsDataList.add(new CommentData("Atte haista vittu t.kikkihiiri", "1244", "Per Kunter", null));
-        mCommentsDataList.add(new CommentData("#androidkoodaus / 5", "1434", "Peter", null));
+        mCommentsDataList.add(new CommentData("Test comment", "1234", "Foobar", null));
+        mCommentsDataList.add(new CommentData("Testi kommentti hehehheh", "1244", "Per Kunter", null));
+        mCommentsDataList.add(new CommentData("Kommentoin tätä kuvaa :)", "1434", "Peter", null));
 
     }
 }
