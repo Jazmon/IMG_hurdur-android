@@ -1,5 +1,6 @@
 package xyz.atte.img_hurdur;
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -103,7 +104,7 @@ public class CommentsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
 
-        ((MainActivity)getActivity()).showBackButton();
+        ((MainActivity) getActivity()).showBackButton();
 
 
         super.onViewCreated(view, savedInstanceState);
@@ -201,12 +202,14 @@ public class CommentsFragment extends Fragment {
     private class GetCommentsTask extends AsyncTask<Void, Void, List<String>> {
 
         private String mAuthHeader;
+        private String mUrl;
 
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
+            this.mUrl = Resources.getSystem().getString(R.string.host_name) + "/api/image/";
         }
 
         @Override
@@ -216,7 +219,7 @@ public class CommentsFragment extends Fragment {
             String response = "";
 
             try {
-                url = new URL("http://pulivari.xyz/api/image/" + imageID);
+                url = new URL(mUrl + imageID);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -242,7 +245,7 @@ public class CommentsFragment extends Fragment {
                     JSONArray jsonArray = jsonObject.getJSONArray("comments");
 
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        String text = "";
+                        String text;
                         jsonObject = jsonArray.getJSONObject(i);
 
                         try {
@@ -251,7 +254,6 @@ public class CommentsFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }
             } catch (IOException | JSONException e) {
@@ -264,13 +266,11 @@ public class CommentsFragment extends Fragment {
         @Override
         protected void onPostExecute(List<String> list) {
             adapter.clear();
-            for(int i = 0; i < list.size(); i++) {
-                mCommentsDataList.add(new CommentData(list.get(i),imageID,"Anon",null));
+            for (int i = 0; i < list.size(); i++) {
+                mCommentsDataList.add(new CommentData(list.get(i), imageID, "Anon", null));
 
             }
-
             adapter.notifyDataSetChanged();
         }
-
     }
 }

@@ -28,7 +28,7 @@ public class RootFragment extends Fragment {
 
         FragmentTransaction transaction = getFragmentManager()
                 .beginTransaction();
-		/*
+        /*
 		 * When this container fragment is created, we fill it with our first
 		 * "real" fragment
 		 */
