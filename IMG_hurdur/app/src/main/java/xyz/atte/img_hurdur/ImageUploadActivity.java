@@ -13,8 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -22,19 +22,32 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Image upload activity
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
+ */
 public class ImageUploadActivity extends AppCompatActivity {
-
     private static final int MULTIPLE_PERMISSION_CODE = 12;
     private static final int IMAGE_CAPTURE_PERMISSION_REQUEST_ID = 2;
-    private final String TAG = getClass().getSimpleName();
+    protected String mToken;
+    File photoFile;
     private ImageView mCameraPictureView;
-    //private Button mTakePictureButton;
+    private EditText mTitleText;
+    private EditText mDescriptionText;
+
     protected String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mToken = getIntent().getExtras().getString("token");
         setContentView(R.layout.activity_image_upload);
+
+        mTitleText = (EditText) findViewById(R.id.mImageTitleTextField);
+        mDescriptionText = (EditText) findViewById(R.id.mDescriptionTextField);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.uploadToolbar);
         setSupportActionBar(toolbar);
@@ -52,37 +65,49 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         mCameraPictureView = (ImageView) findViewById(R.id.mCameraPreviewImage);
         getPermissions();
-        Log.d(TAG, String.valueOf(mCameraPictureView.getWidth()) + " " + String.valueOf(mCameraPictureView.getHeight()));
-        //mTakePictureButton = (Button) findViewById(R.id.mTakePhotoButton);
+    }
 
+    /**
+     * Creates the upload task when invoked
+     *
+     * @param v the view that invoked the method
+     */
+    public void uploadImage(View v) {
 
+        String title = mTitleText.getText().toString();
+        String desc = mDescriptionText.getText().toString();
+        new HttpUpload(this,mToken,mCurrentPhotoPath,title,desc,photoFile).execute();
 
     }
 
+    /**
+     * Gets needed permissions
+     */
     private void getPermissions() {
-
         // Ask external storage write permission
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.CAMERA},
-                        MULTIPLE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA},
+                    MULTIPLE_PERMISSION_CODE);
         } else {
             dispatchTakePictureIntent();
         }
-
     }
 
+    /**
+     * Dispatches the camera intent
+     */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
+            photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
@@ -97,15 +122,18 @@ public class ImageUploadActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates the image file
+     *
+     * @return the created image file
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        Log.d(TAG, timeStamp);
         String imageFileName = "JPEG_" + timeStamp + "_";
-        Log.d(TAG, imageFileName + ".jpg");
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        Log.d(TAG, storageDir + imageFileName + ".jpg");
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -114,37 +142,20 @@ public class ImageUploadActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, image.getAbsolutePath());
         return image;
     }
 
+    /**
+     * Sets the views image
+     */
     private void setPic() {
-        /*
-        // Get the dimensions of the View
-        int targetW = mCameraPictureView.getWidth();
-        int targetH = mCameraPictureView.getHeight();
-
-        Log.d(TAG,String.valueOf(targetW) + " " + String.valueOf(targetH));
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        */
-
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
         mCameraPictureView.setImageBitmap(bitmap);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -153,32 +164,19 @@ public class ImageUploadActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     dispatchTakePictureIntent();
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
+    /**
+     * Sets the picture when the camera returns the image
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setPic();
-        /*
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mCameraPictureView.setImageBitmap(imageBitmap);
-        } */
-
-
     }
 }

@@ -49,8 +49,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Description:"
         android:id="@+id/mDescriptionLable"
-        android:layout_marginTop="42dp"
-        android:layout_below="@+id/mImageTitleTextField"
+        android:layout_alignTop="@+id/mDescriptionTextField"
         android:layout_toStartOf="@+id/mDescriptionTextField" />
 
     <EditText
@@ -59,11 +58,10 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/mDescriptionTextField"
-        android:text="Write some description for image"
-        android:backgroundTint="#929090"
-        android:background="#000000"
-        android:layout_alignTop="@+id/mDescriptionLable"
+        android:layout_marginTop="54dp"
+        android:layout_below="@+id/mImageTitleTextField"
         android:layout_alignStart="@+id/mUploadImageButton" />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -72,17 +70,18 @@
         android:id="@+id/mUploadImageButton"
         android:layout_marginTop="54dp"
         android:layout_below="@+id/mDescriptionTextField"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="uploadImage" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/mImageTitleTextField"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/mDescriptionTextField" />
+        android:layout_alignStart="@+id/mDescriptionTextField"
+        android:hint="Name"/>
 
 </RelativeLayout>
 

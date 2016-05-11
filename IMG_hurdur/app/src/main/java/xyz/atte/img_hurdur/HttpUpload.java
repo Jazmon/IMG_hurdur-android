@@ -1,44 +1,44 @@
 package xyz.atte.img_hurdur;
 
-import android.content.Context;
-import android.graphics.Bitmap;
+import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by MikkoEPIC on 20.4.2016.
+ * Upload image task
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
-public class HttpUpload extends AsyncTask<Void,Void,String> {
-
+public class HttpUpload extends AsyncTask<Void, Void, Void> {
     private final String TAG = this.getClass().getSimpleName();
-    protected String mServerUrl;
-    protected Context context;
-    protected Bitmap mImg;
+    private String mUrl;
+    protected String mToken;
+    protected Activity context;
+    protected File mImg;
     protected String mImgPath;
     protected String mImgTitle;
     protected String mImgDescription;
 
 
-    public HttpUpload(Context context,
+    public HttpUpload(Activity context,
+                      String mToken,
                       String mImgPath,
                       String mImgTitle,
-                      String mImgDescription) {
+                      String mImgDescription,
+                      File mImg) {
         super();
+        this.mImg = mImg;
+        this.mToken = mToken;
+        this.mUrl = "http://pulivari.xyz" + "/api/upload/";
         this.context = context;
         this.mImgPath = mImgPath;
         this.mImgTitle = mImgTitle;
@@ -46,116 +46,112 @@ public class HttpUpload extends AsyncTask<Void,Void,String> {
 
     }
 
+    /**
+     * Uploads image, title and description to server
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
-    protected void onPreExecute() {
-        //TODO add some progression display for upload?
-    }
+    protected Void doInBackground(Void... arg0) {
+        String mAuthHeader = "Bearer " + mToken;
+        HttpURLConnection conn;
+        DataOutputStream outputStream;
 
-    @Override
-    protected String doInBackground(Void... voids) {
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
 
-        //compress the image to jpg format
-        mImg.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        String[] q = mImg.getPath().split("/");
+        int idx = q.length - 1;
 
-        //Encode image to Base64
-        String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
-
-        //generate hashMap to store encodedImage,title and description.
-        HashMap<String,String> detail = new HashMap<>();
-        detail.put("title", mImgTitle);
-        detail.put("image", encodedImage);
-        detail.put("description",mImgDescription);
-
-        try{
-            //convert this HashMap to encodedUrl
-            String dataToSend = hashMapToUrl(detail);
-            //make a Http request and send data
-            String response = post(mServerUrl,dataToSend);
-
-            //return the response
-            return response;
-
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e(TAG,"ERROR  "+e);
-            return null;
-        }
-    }
-
-    private String hashMapToUrl(HashMap<String, String> params){
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
         try {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (first) {
-                    first = false;
-                } else {
-                    result.append("&");
-                }
+            FileInputStream fileInputStream = new FileInputStream(mImg);
 
-                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            URL url = new URL(mUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.addRequestProperty("Authorization", mAuthHeader);
 
-        return result.toString();
-    }
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
 
-    public String post(String serverUrl,String dataToSend) {
-        try {
-            URL url = new URL(serverUrl);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0");
+            conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-            //set timeout of 30 seconds
-            con.setConnectTimeout(1000 * 30);
-            con.setReadTimeout(1000 * 30);
+            outputStream = new DataOutputStream(conn.getOutputStream());
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"file\";filename=\"" + q[idx] + "\"" + lineEnd);
+            outputStream.writeBytes("Content-Type: " + "image/jpeg" + lineEnd);
+            outputStream.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
 
-            //Http-method
-            con.setRequestMethod("POST");
-            con.setDoOutput(true);
+            outputStream.writeBytes(lineEnd);
 
-            OutputStream os = con.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
 
-            //make request
-            writer.write(dataToSend);
-            writer.flush();
-            writer.close();
-            os.close();
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
-            //get the response
-            int responseCode = con.getResponseCode();
-
-            if(responseCode == HttpURLConnection.HTTP_OK){
-                //read the response
-                StringBuilder sb = new StringBuilder();
-
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String line;
-
-                //loop through the response from the server
-                while ((line = reader.readLine()) != null){
-                    sb.append(line).append("\n");
-                }
-
-                //return the response
-                return sb.toString();
-            }else{
-                Log.e(TAG,"ERROR - Invalid response code from server "+ responseCode);
-                return null;
+            while (bytesRead > 0) {
+                outputStream.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
             }
 
+            outputStream.writeBytes(lineEnd);
+
+            // Upload post data
+            // Title
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"" + "title" + "\"" + lineEnd);
+            outputStream.writeBytes("Content-Type: text/plain" + lineEnd);
+            outputStream.writeBytes(lineEnd);
+            outputStream.writeBytes(mImgTitle);
+            outputStream.writeBytes(lineEnd);
+
+            // description
+            outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"" + "description" + "\"" + lineEnd);
+            outputStream.writeBytes("Content-Type: text/plain" + lineEnd);
+            outputStream.writeBytes(lineEnd);
+            outputStream.writeBytes(mImgDescription);
+            outputStream.writeBytes(lineEnd);
+
+            outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            if (conn.getResponseCode() != 200) {
+                Log.w(TAG, "doInBackground: Failed to upload image! response code: " + conn.getResponseCode());
+            }
+
+            fileInputStream.close();
+            outputStream.flush();
+            outputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            Log.e(TAG, "error: " + e.getMessage(), e);
         }
+
+        return null;
     }
 
+    /**
+     * Ends the activity
+     * <br>
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
 
+        // End ImageUploadActivity
+        context.finish();
+
+
+    }
 }
