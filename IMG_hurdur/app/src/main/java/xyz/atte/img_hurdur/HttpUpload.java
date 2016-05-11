@@ -21,6 +21,7 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
 
     private final String TAG = this.getClass().getSimpleName();
     protected final String mServerUrl = "http://pulivari.xyz/api/upload/";
+    protected String mToken;
     protected Activity context;
     protected File mImg;
     protected String mImgPath;
@@ -29,12 +30,14 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
 
 
     public HttpUpload(Activity context,
+                      String mToken,
                       String mImgPath,
                       String mImgTitle,
                       String mImgDescription,
                       File mImg) {
         super();
         this.mImg = mImg;
+        this.mToken = mToken;
         this.context = context;
         this.mImgPath = mImgPath;
         this.mImgTitle = mImgTitle;
@@ -49,6 +52,9 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... arg0) {
+
+        String mAuthHeader = "Bearer " + mToken;
+
         // TODO Auto-generated method stub
         HttpURLConnection conn = null;
         DataOutputStream outputStream = null;
@@ -71,6 +77,7 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
 
             URL url = new URL(mServerUrl);
             conn = (HttpURLConnection) url.openConnection();
+            conn.addRequestProperty("Authorization", mAuthHeader);
 
             conn.setDoInput(true);
             conn.setDoOutput(true);

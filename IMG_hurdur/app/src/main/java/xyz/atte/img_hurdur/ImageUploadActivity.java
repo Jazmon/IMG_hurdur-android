@@ -26,6 +26,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     private static final int MULTIPLE_PERMISSION_CODE = 12;
     private static final int IMAGE_CAPTURE_PERMISSION_REQUEST_ID = 2;
+    protected String mToken;
     File photoFile;
     private final String TAG = getClass().getSimpleName();
     private ImageView mCameraPictureView;
@@ -35,6 +36,7 @@ public class ImageUploadActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mToken = getIntent().getExtras().getString("token");
         setContentView(R.layout.activity_image_upload);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.uploadToolbar);
@@ -62,8 +64,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     public void uploadImage(View v) {
         Log.d(TAG,"upload");
-        //Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-        new HttpUpload(this,mCurrentPhotoPath,"test title","this is test description",photoFile).execute();
+        new HttpUpload(this,mToken,mCurrentPhotoPath,"test title","this is test description",photoFile).execute();
     }
 
     private void getPermissions() {
@@ -157,13 +158,5 @@ public class ImageUploadActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setPic();
-        /*
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mCameraPictureView.setImageBitmap(imageBitmap);
-        } */
-
-
     }
 }

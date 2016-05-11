@@ -1,7 +1,6 @@
 package xyz.atte.img_hurdur;
 
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,19 +22,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class BrowseFragment extends Fragment implements View.OnClickListener {
+public class BrowseFragment extends Fragment {
     private static final String TAG = "BrowseFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -48,6 +43,11 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
     public BrowseFragment() {
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +56,9 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
         initDataSet();
     }
 
+    /**
+     * Calls the async task to refresh image cards
+     */
     private void refreshItems() {
         Log.d(TAG, "refreshItems");
         // Load items
@@ -64,16 +67,21 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
         onItemsLoadComplete();
     }
 
+    /**
+     * Stops the swipelayout refresh animation
+     */
     private void onItemsLoadComplete() {
         // Update the adapter and notify data set changed
         mImageCardDataList.clear();
-       // mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "foobar123"));
         Log.d(TAG, "onItemsLoadComplete");
 
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,53 +96,46 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                 refreshItems();
             }
         });
-        //mSwipeRefreshLayout.setEnabled(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(false);
 
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
         mAdapter = new MyAdapter(mImageCardDataList);
         mRecyclerView.setAdapter(mAdapter);
 
-        /*int pos = 0;
-        mImageCardDataList.remove(pos);
-        mRecyclerView.removeViewAt(pos);
-        mAdapter.notifyItemRemoved(pos);
-        mAdapter.notifyItemRangeChanged(pos, mImageCardDataList.size());*/
-        //mAdapter.notifyDataSetChanged();
-        // Inflate the layout for this fragment
         return rootView;
     }
 
+    /**
+     * Gets the images from the server
+     */
     private void initDataSet() {
         Log.d(TAG, "initDataSet");
         mImageCardDataList = new LinkedList<>();
-        /*mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));
-        mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "Corgi", "I'm a corgi, woof woof", "foobar123"));*/
         new GetImagesTask().execute((Void) null);
     }
 
-    @Override
-    public void onClick(View v) {
-    }
-
+    /**
+     * Gets the image from the server
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         int index;
 
+        /**
+         * Sets the index which image from the cardlist the image is mapped to
+         *
+         * @param index the index which image from the cardlist the image is mapped to
+         */
         public DownloadImageTask(int index) {
             this.index = index;
         }
 
+        /**
+         * Constructs a bitmap from the response stream
+         * {@inheritDoc}
+         */
         protected Bitmap doInBackground(String... urls) {
             String url = urls[0];
             Bitmap bitmap = null;
@@ -148,50 +149,37 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             return bitmap;
         }
 
+        /**
+         * Sets the imagecard image and notifies it has changed
+         * {@inheritDoc}
+         */
+        @Override
         protected void onPostExecute(Bitmap result) {
+            Log.d(TAG, String.valueOf(index) + "@ onPostExecute");
+            Log.d(TAG, String.valueOf(mImageCardDataList.size()));
             mImageCardDataList.get(index).image = result;
             mAdapter.notifyItemChanged(index);
             mAdapter.notifyDataSetChanged();
         }
     }
 
-
+    /**
+     * Gets the images
+     */
     private class GetImagesTask extends AsyncTask<Void, Void, List<ImageCardData>> {
         private static final String TAG = "GetImagesTask";
         private String mAuthHeader;
-        private ProgressDialog progressDialog;
 
+
+        /**
+         * Sets the header
+         * <br>
+         * {@inheritDoc}
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            /*progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setTitle("Loading");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Please wait while weather data is loaded...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();*/
-
-            mAuthHeader = "Bearer: " + ((MainActivity) getActivity()).mToken;
-        }
-
-        private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException {
-            Log.d(TAG, "getQuery");
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            for (HashMap.Entry<String, String> entry : params.entrySet()) {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            }
-
-            return result.toString();
+            mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
         }
 
         @Override
@@ -204,7 +192,6 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            //HashMap<String, String> postData = new HashMap<>();
             String response = "";
 
             try {
@@ -212,10 +199,8 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                 conn.setReadTimeout(10_000);
                 conn.setConnectTimeout(15_000);
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Authorization", mAuthHeader);
+                conn.addRequestProperty("Authorization", mAuthHeader);
                 Log.d(TAG, "doInBackground: mAuthHeader:" + mAuthHeader);
-                //conn.setDoOutput(true);
-                //conn.setDoInput();
                 int responseCode = conn.getResponseCode();
                 Log.d(TAG, "doInBackground: responseCode: " + responseCode);
 
@@ -227,8 +212,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                         response += line;
                     }
                     Log.d(TAG, "response: " + response);
-                    // Parse the json response
-                    //JSONObject jsonObject = new JSONObject(response);
+
                     JSONArray jsonArray = new JSONArray(response);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -245,33 +229,10 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                         list.add(cardData);
                     }
 
-                    /*
-                     {
-                        "_id": "57179ae4159335583b464be2",
-                        "title": "Cool pic",
-                        "description": "Foo bar baz",
-                        "uploadPath": "asdfasdf.png",
-                        "__v": 0,
-                        "comments": [],
-                        "hashtags": [],
-                        "mentions": [],
-                        "likes": [],
-                        "modified": "2016-04-20T15:06:05.865Z",
-                        "created": "2016-04-20T15:06:05.865Z"
-                     },
-                    * */
-                    /*boolean success = jsonObject.getBoolean("success");
-                    String token = jsonObject.getString("token");
-                    int expiresIn = jsonObject.getInt("expiresIn");*/
-                    /*data.putBoolean("success", success);
-                    data.putString("token", token);
-                    data.putInt("expiresIn", expiresIn);*/
-                    //return "";
+
                     return list;
                 } else {
                     Log.d(TAG, "doInBackground: response was not ok");
-                    //response = "";
-
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
@@ -279,36 +240,20 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             return list;
         }
 
+
         @Override
         protected void onPostExecute(List<ImageCardData> list) {
             super.onPostExecute(list);
-            //smallTextView.setText(weather);
-            //bigTextView.setText(location);
-            //imageView.setImageBitmap(weatherIcon);
-            //progressDialog.dismiss();
-            //mImageCardDataList.remove(pos);
-            /*int pos = 0;
-            mImageCardDataList.remove(pos);
-            mRecyclerView.removeViewAt(pos);
-            mAdapter.notifyItemRemoved(pos);
-            mAdapter.notifyItemRangeChanged(pos, mImageCardDataList.size());*/
-            //mAdapter.notifyDataSetChanged();
-            /*for (ImageCardData cardData : list) {
-                mImageCardDataList.add(cardData);
-            }*/
 
             for (int i = 0; i < list.size(); i++) {
                 ImageCardData data = list.get(i);
                 mImageCardDataList.add(data);
                 new DownloadImageTask(i).execute(mUrl + "/uploads/" + data.path);
             }
-            //mImageCardDataList.add(new ImageCardData(R.drawable.corgi, "foo", "bar", "bar123"));
-            //mAdapter.notifyDataSetChanged();
 
             mRecyclerView.removeAllViews();
             mAdapter.notifyItemRangeRemoved(0, mAdapter.getItemCount());
 
-            //mAdapter.notifyItemRangeChanged(pos, mImageCardDataList.size());*/
             mAdapter.notifyDataSetChanged();
         }
     }
