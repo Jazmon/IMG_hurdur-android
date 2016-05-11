@@ -1,12 +1,10 @@
 package xyz.atte.img_hurdur;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,12 +13,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by MikkoEPIC on 20.4.2016.
+ * Upload image task
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class HttpUpload extends AsyncTask<Void, Void, Void> {
-
     private final String TAG = this.getClass().getSimpleName();
-    protected final String mServerUrl = "http://pulivari.xyz/api/upload/";
+    private String mUrl;
     protected String mToken;
     protected Activity context;
     protected File mImg;
@@ -38,6 +39,7 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
         super();
         this.mImg = mImg;
         this.mToken = mToken;
+        this.mUrl = Resources.getSystem().getString(R.string.host_name) + "/api/upload/";
         this.context = context;
         this.mImgPath = mImgPath;
         this.mImgTitle = mImgTitle;
@@ -45,25 +47,20 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
 
     }
 
-    @Override
-    protected void onPreExecute() {
-        //TODO add some progression display for upload?
-    }
-
+    /**
+     * Uploads image, title and description to server
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     protected Void doInBackground(Void... arg0) {
-
         String mAuthHeader = "Bearer " + mToken;
-
-        // TODO Auto-generated method stub
-        HttpURLConnection conn = null;
-        DataOutputStream outputStream = null;
-        DataInputStream inputStream = null;
+        HttpURLConnection conn;
+        DataOutputStream outputStream;
 
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
-        String result = "";
 
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
@@ -75,7 +72,7 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
         try {
             FileInputStream fileInputStream = new FileInputStream(mImg);
 
-            URL url = new URL(mServerUrl);
+            URL url = new URL(mUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.addRequestProperty("Authorization", mAuthHeader);
 
@@ -110,7 +107,6 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
             }
 
             outputStream.writeBytes(lineEnd);
-            //outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             // Upload post data
             // Title
@@ -129,7 +125,6 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
             outputStream.writeBytes(mImgDescription);
             outputStream.writeBytes(lineEnd);
 
-
             outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             if (conn.getResponseCode() != 200) {
@@ -140,32 +135,23 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
             outputStream.flush();
             outputStream.close();
         } catch (IOException e) {
-            Log.e("Debug", "error: " + e.getMessage(), e);
-        }
-
-        //------------------ read the SERVER RESPONSE
-        try {
-            inputStream = new DataInputStream(conn.getInputStream());
-            String str;
-            while ((str = inputStream.readLine()) != null) {
-                Log.e("Debug", "Server Response " + str);
-                //reponse_data=str;
-            }
-            inputStream.close();
-        } catch (IOException ioex) {
-            Log.e("Debug", "error: " + ioex.getMessage(), ioex);
+            Log.e(TAG, "error: " + e.getMessage(), e);
         }
 
         return null;
     }
 
+    /**
+     * Ends the activity
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
         // End ImageUploadActivity
         context.finish();
-
 
 
     }
