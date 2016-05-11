@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,10 +43,10 @@ public class CommentsFragment extends Fragment {
     private String imageID;
     private String comment = "";
     private EditText commentText;
+    private TextView title;
 
     private ArrayList<CommentData> mCommentsDataList;
     CommentsAdapter adapter;
-    private String [] comments;
 
 
     private ListView mListView;
@@ -88,9 +89,6 @@ public class CommentsFragment extends Fragment {
         comment = commentText.getText().toString();
         Log.d(TAG,"COMMENT:" + comment);
         new PostCommentTask().execute();
-
-        //After posting the comment refresh comments from the server
-        //getCommentsFromServer();
     }
 
 
@@ -101,6 +99,8 @@ public class CommentsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Bundle args = getArguments();
+
         ((MainActivity)getActivity()).showBackButton();
 
         super.onViewCreated(view, savedInstanceState);
@@ -110,6 +110,9 @@ public class CommentsFragment extends Fragment {
         mListView.setAdapter(adapter);
 
         commentText = (EditText) view.findViewById(R.id.userCommentText);
+
+        title = (TextView) view.findViewById(R.id.commentsImageTitle);
+        title.setText(args.getString("title"));
 
 
 
@@ -251,8 +254,14 @@ public class CommentsFragment extends Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         String text = "";
                         jsonObject = jsonArray.getJSONObject(i);
-                        text = jsonObject.getString("text");
-                        mCommentList.add(text);
+
+                        try {
+                            text = jsonObject.getString("text");
+                            mCommentList.add(text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
 
@@ -271,7 +280,7 @@ public class CommentsFragment extends Fragment {
         protected void onPostExecute(List<String> list) {
             adapter.clear();
             for(int i = 0; i < list.size(); i++) {
-                mCommentsDataList.add(new CommentData(list.get(i),imageID,"Testerino Userino",null));
+                mCommentsDataList.add(new CommentData(list.get(i),imageID,"Anon",null));
             }
 
             adapter.notifyDataSetChanged();
