@@ -41,7 +41,6 @@ import javax.net.ssl.HttpsURLConnection;
  * @version 1.0
  */
 public class CommentsFragment extends Fragment {
-    private static final String TAG = "CommentsView";
     private String imageID;
     private String comment = "";
     private EditText commentText;
@@ -63,7 +62,6 @@ public class CommentsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
         ((MainActivity) getActivity()).showBackButton();
         getCommentsFromServer();
     }
@@ -77,7 +75,6 @@ public class CommentsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.comments, container, false);
         Bundle args = getArguments();
         imageID = args.getString("imageID");
-        rootView.setTag(TAG);
         initDataSet();
         return rootView;
     }
@@ -94,7 +91,6 @@ public class CommentsFragment extends Fragment {
      */
     protected void postCommentToServer() {
         comment = commentText.getText().toString();
-        Log.d(TAG, "COMMENT:" + comment);
         new PostCommentTask().execute();
     }
 
@@ -156,7 +152,6 @@ public class CommentsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             URL url = null;
-            String response = "";
 
             try {
                 url = new URL("http://pulivari.xyz/api/image/" + imageID + "/comment/");
@@ -179,26 +174,15 @@ public class CommentsFragment extends Fragment {
                 String query = URLEncoder.encode("text", "UTF-8");
                 query += "=" + URLEncoder.encode(comment, "UTF-8");
 
-                Log.d(TAG, "QUERY:" + query);
                 writer.write(query);
                 writer.flush();
                 writer.close();
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                Log.d(TAG, "doInBackground: responseCode: " + responseCode);
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    Log.d(TAG, "doInBackground: responsecode was Ok");
-                    String line;
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line = br.readLine()) != null) {
-                        response += line;
-                    }
-
-                } else {
-                    Log.d(TAG, "doInBackground: response was not ok");
-
+                    Log.e("post comments", "doInBackground: failed to get comments");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -243,20 +227,15 @@ public class CommentsFragment extends Fragment {
                 conn.setConnectTimeout(15_000);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Authorization", mAuthHeader);
-                Log.d(TAG, "doInBackground: mAuthHeader:" + mAuthHeader);
-                //conn.getDoOutput();
 
                 int responseCode = conn.getResponseCode();
-                Log.d(TAG, "doInBackground: responseCode: " + responseCode);
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    Log.d(TAG, "doInBackground: respcode was Ok");
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     while ((line = br.readLine()) != null) {
                         response += line;
                     }
-                    Log.d(TAG, "response: " + response);
 
                     // Parse the json response
                     JSONObject jsonObject = new JSONObject(response);
@@ -274,11 +253,6 @@ public class CommentsFragment extends Fragment {
                         }
 
                     }
-
-
-                } else {
-                    Log.d(TAG, "doInBackground: response was not ok");
-
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
