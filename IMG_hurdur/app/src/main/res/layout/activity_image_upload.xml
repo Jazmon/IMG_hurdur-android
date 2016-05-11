@@ -59,11 +59,11 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/mDescriptionTextField"
-        android:text="Write some description for image"
         android:backgroundTint="#929090"
         android:background="#000000"
         android:layout_alignTop="@+id/mDescriptionLable"
-        android:layout_alignStart="@+id/mUploadImageButton" />
+        android:layout_alignStart="@+id/mUploadImageButton"
+        android:hint="Write some description for image"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -79,11 +79,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/mImageTitleTextField"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/mDescriptionTextField" />
+        android:layout_alignStart="@+id/mDescriptionTextField"
+        android:hint="Name"/>
 
 </RelativeLayout>
 

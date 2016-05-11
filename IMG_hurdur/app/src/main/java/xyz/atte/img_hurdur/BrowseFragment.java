@@ -38,6 +38,7 @@ public class BrowseFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ImageCardData> mImageCardDataList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private String mUrl;
 
     public BrowseFragment() {
     }
@@ -51,6 +52,7 @@ public class BrowseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        mUrl = getResources().getString(R.string.host_name);
         initDataSet();
     }
 
@@ -186,7 +188,7 @@ public class BrowseFragment extends Fragment {
             List<ImageCardData> list = new LinkedList<>();
             URL url = null;
             try {
-                url = new URL("http://pulivari.xyz/api/image");
+                url = new URL(mUrl + "/api/image");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -246,7 +248,7 @@ public class BrowseFragment extends Fragment {
             for (int i = 0; i < list.size(); i++) {
                 ImageCardData data = list.get(i);
                 mImageCardDataList.add(data);
-                new DownloadImageTask(i).execute("http://pulivari.xyz/uploads/" + data.path);
+                new DownloadImageTask(i).execute(mUrl + "/uploads/" + data.path);
             }
 
             mRecyclerView.removeAllViews();
