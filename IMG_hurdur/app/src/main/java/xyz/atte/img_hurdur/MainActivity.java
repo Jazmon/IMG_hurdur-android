@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewItemClick{
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -47,6 +47,21 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Show back button on toolbar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        // Add listener to the back button in toolbar
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
+        });
+
     }
 
 
@@ -59,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ImageUploadActivity.class);
+                intent.putExtra("token",mToken);
                 startActivity(intent);
             }
         });
@@ -71,45 +87,34 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewItemC
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public void onItemClick() {
-        Log.d(TAG, "BAR");
+    public void onItemClick(String mImageID) {
+        Log.d(TAG,mImageID);
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
 
-        /*//create fragment
+        //create fragment
         CommentsFragment commentsFragment = new CommentsFragment();
 
         //add comments to args bundle
         Bundle args = new Bundle();
-        args.putStringArray("comments",);
+        args.putString("imageID",mImageID);
+        args.putString("token",mToken);
         commentsFragment.setArguments(args);
-        */
 
 
-        ft.replace(R.id.root_frame, new CommentsFragment());
+
+        ft.replace(R.id.root_frame, commentsFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.addToBackStack(null);
         ft.commit();
 
+
     }
 
     public void showBackButton() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Show back button on toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Add listener to the back button in toolbar
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            }
-        });
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

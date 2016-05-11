@@ -172,7 +172,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
             progressDialog.setCancelable(false);
             progressDialog.show();*/
 
-            mAuthHeader = "Bearer: " + ((MainActivity) getActivity()).mToken;
+            mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
         }
 
         private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException {
@@ -212,7 +212,7 @@ public class BrowseFragment extends Fragment implements View.OnClickListener {
                 conn.setReadTimeout(10_000);
                 conn.setConnectTimeout(15_000);
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Authorization", mAuthHeader);
+                conn.addRequestProperty("Authorization", mAuthHeader);
                 Log.d(TAG, "doInBackground: mAuthHeader:" + mAuthHeader);
                 //conn.setDoOutput(true);
                 //conn.setDoInput();
