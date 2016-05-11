@@ -22,9 +22,9 @@ import java.util.List;
  * <br>
  * {@inheritDoc}
  *
- * @Author Mikko Tossavainen
- * @Author Atte Huhtakangas
- * @Version 1.0
+ * @author Mikko Tossavainen
+ * @author Atte Huhtakangas
+ * @version 1.0
  */
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;

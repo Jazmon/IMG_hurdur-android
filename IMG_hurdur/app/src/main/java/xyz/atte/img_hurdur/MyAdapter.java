@@ -15,9 +15,9 @@ import java.util.List;
 /**
  * This class is custom adapter for recycler view.
  *
- * @Author Mikko Tossavainen
- * @Author Atte Huhtakangas
- * @Version 1.0
+ * @author Mikko Tossavainen
+ * @author Atte Huhtakangas
+ * @version 1.0
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 

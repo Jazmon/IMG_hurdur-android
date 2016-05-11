@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 /**
  * This class is used as a root fragment which content is changed constantly.
  *
- * @Author Mikko Tossavainen
- * @Author Atte Huhtakangas
- * @Version 1.0
+ * @author Mikko Tossavainen
+ * @author Atte Huhtakangas
+ * @version 1.0
  */
 public class RootFragment extends Fragment {
     /**
