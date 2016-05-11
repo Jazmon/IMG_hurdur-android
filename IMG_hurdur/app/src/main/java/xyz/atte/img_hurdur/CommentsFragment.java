@@ -1,6 +1,5 @@
 package xyz.atte.img_hurdur;
 
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -138,18 +137,24 @@ public class CommentsFragment extends Fragment {
     }
 
     /**
-     *
+     * A task to post a comment to server
      */
     private class PostCommentTask extends AsyncTask<Void, Void, Void> {
         private String mAuthHeader = "Bearer ";
 
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Void doInBackground(Void... params) {
             URL url = null;
@@ -192,6 +197,11 @@ public class CommentsFragment extends Fragment {
             return null;
         }
 
+        /**
+         * Gets comments from the server
+         * <br>
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -199,19 +209,24 @@ public class CommentsFragment extends Fragment {
         }
     }
 
+    /**
+     * Gets comments from the server
+     */
     private class GetCommentsTask extends AsyncTask<Void, Void, List<String>> {
-
         private String mAuthHeader;
-        private String mUrl;
 
-
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
-            this.mUrl = Resources.getSystem().getString(R.string.host_name) + "/api/image/";
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected List<String> doInBackground(Void... params) {
             List<String> mCommentList = new LinkedList<>();
@@ -219,7 +234,7 @@ public class CommentsFragment extends Fragment {
             String response = "";
 
             try {
-                url = new URL(mUrl + imageID);
+                url = new URL("http://pulivari.xyz/api/image/" + imageID);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -263,12 +278,16 @@ public class CommentsFragment extends Fragment {
             return mCommentList;
         }
 
+        /**
+         * Adds the new comment to the list
+         * <br>
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(List<String> list) {
             adapter.clear();
             for (int i = 0; i < list.size(); i++) {
                 mCommentsDataList.add(new CommentData(list.get(i), imageID, "Anon", null));
-
             }
             adapter.notifyDataSetChanged();
         }

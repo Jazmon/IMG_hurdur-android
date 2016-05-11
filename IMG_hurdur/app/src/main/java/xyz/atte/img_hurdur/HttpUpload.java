@@ -1,7 +1,6 @@
 package xyz.atte.img_hurdur;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -39,7 +38,7 @@ public class HttpUpload extends AsyncTask<Void, Void, Void> {
         super();
         this.mImg = mImg;
         this.mToken = mToken;
-        this.mUrl = Resources.getSystem().getString(R.string.host_name) + "/api/upload/";
+        this.mUrl = "http://pulivari.xyz" + "/api/upload/";
         this.context = context;
         this.mImgPath = mImgPath;
         this.mImgTitle = mImgTitle;
