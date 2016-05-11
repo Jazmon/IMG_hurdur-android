@@ -11,31 +11,42 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class acts as a main view for the application.
+ * <br>
+ * {@inheritDoc}
+ *
+ * @Author Mikko Tossavainen
+ * @Author Atte Huhtakangas
+ * @Version 1.0
+ */
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     protected String mToken;
     protected Date mTokenExpires;
 
+    /**
+     * Used to setup ui elements in the view and set on click listener.
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
             mToken = extras.getString("token");
             mTokenExpires = new Date(extras.getInt("expiresIn"));
-            Log.d(TAG, "onCreate: mToken:" + mToken);
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -64,8 +75,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Used to hide visual backbutton on app toolbar.
+     * <br>
+     * {@inheritDoc}
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
 
-
+    /**
+     * Creates floating action button and adds a listener which will start new activity
+     * when pressed.
+     * {@inheritDoc}
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -74,21 +99,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ImageUploadActivity.class);
-                intent.putExtra("token",mToken);
+                intent.putExtra("token", mToken);
                 startActivity(intent);
             }
         });
 
     }
 
+    /**
+     * Initializes view pager.
+     *
+     * @param viewPager used to initialized view pager.
+     */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new RootFragment(), "BROWSE PICTURES");
         viewPager.setAdapter(adapter);
     }
 
-    public void onItemClick(String mImageID) {
-        Log.d(TAG,mImageID);
+    /**
+     * Used for opening comments fragment.
+     *
+     * @param mImageID id which represents a image on a server.
+     * @param title    image title.
+     */
+    public void onItemClick(String mImageID, String title) {
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -99,11 +134,10 @@ public class MainActivity extends AppCompatActivity {
 
         //add comments to args bundle
         Bundle args = new Bundle();
-        args.putString("imageID",mImageID);
-        args.putString("token",mToken);
+        args.putString("imageID", mImageID);
+        args.putString("token", mToken);
+        args.putString("title", title);
         commentsFragment.setArguments(args);
-
-
 
         ft.replace(R.id.root_frame, commentsFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -113,10 +147,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Shows back button on app toolbar.
+     */
     public void showBackButton() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Used for creating Viewpager on fragment.
+     *
+     * @Author Mikko Tossavainen
+     * @Author Atte Huhtakangas
+     * @Version 1.0
+     */
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -125,22 +169,41 @@ public class MainActivity extends AppCompatActivity {
             super(manager);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @param position used to get item position.
+         * @return returns item @ position.
+         */
         @Override
         public Fragment getItem(int position) {
 
             return mFragmentList.get(position);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * @return returns fragmentlist size.
+         */
         @Override
         public int getCount() {
             return mFragmentList.size();
         }
 
+        /**
+         * Adds fragment.
+         * {@inheritDoc}
+         */
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
 
+        /**
+         * Returns page title.
+         * {@inheri-Doc}
+         */
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);

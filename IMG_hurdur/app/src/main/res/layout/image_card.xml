@@ -69,23 +69,6 @@
                 android:text="Comments"
                 />
 
-            <Button
-                android:id="@+id/button2"
-                style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/description"
-                android:layout_centerHorizontal="true"
-                android:text="LIKE"/>
-
-            <Button
-                android:id="@+id/button3"
-                style="@android:style/Widget.DeviceDefault.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/description"
-                android:layout_toEndOf="@+id/button2"
-                android:text="Foo"/>
         </android.support.v7.widget.ButtonBarLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

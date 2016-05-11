@@ -2,11 +2,7 @@ package xyz.atte.img_hurdur;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.NetworkOnMainThreadException;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +10,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Atte on 20.4.2016.
+ * This class is custom adapter for recycler view.
+ *
+ * @Author Mikko Tossavainen
+ * @Author Atte Huhtakangas
+ * @Version 1.0
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+
     private List<ImageCardData> imageCardDataList;
     private static final String TAG = "MyAdapter";
     public Context context;
@@ -44,20 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             vCommentsButton = (Button) v.findViewById(R.id.commentsButton);
             foo = v;
             context = v.getContext();
-            /*
-            vCommentsButton.setOnClickListener(new View.OnClickListener() {
-                Context c;
 
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "CLICK");
-                    Log.d(TAG, foo.getContext().toString());
-                    if ((c = foo.getContext()) instanceof RecyclerViewItemClick) {
-                        ((RecyclerViewItemClick) c).onItemClick();
-                        Log.d(TAG, "FOO");
-                    }
-                }
-            });*/
         }
     }
 
@@ -67,6 +53,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Create new views (invoked by the layout manager)
+
+    /**
+     * Creates viewholder and inflates it.
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Create a new view
@@ -80,7 +72,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     * <br>
+     * Replace the contents of a view (invoked by the layout manager)
+     * also sets values in view specific item.
+     * {@inheritDoc}
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
@@ -92,13 +90,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.vCommentsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity m = (MainActivity)context;
-                m.onItemClick(cardData.imageId);
+                MainActivity m = (MainActivity) context;
+                m.onItemClick(cardData.imageId, cardData.title);
             }
         });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
+
+    /**
+     * Returns imageCardDataList size.
+     *
+     * @return Return the size of your dataset (invoked by the layout manager)
+     */
     @Override
     public int getItemCount() {
         return imageCardDataList.size();

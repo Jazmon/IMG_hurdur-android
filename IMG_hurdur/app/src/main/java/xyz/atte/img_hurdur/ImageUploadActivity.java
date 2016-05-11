@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -30,7 +31,8 @@ public class ImageUploadActivity extends AppCompatActivity {
     File photoFile;
     private final String TAG = getClass().getSimpleName();
     private ImageView mCameraPictureView;
-    //private Button mTakePictureButton;
+    private EditText mTitleText;
+    private EditText mDescriptionText;
     protected String mCurrentPhotoPath;
 
     @Override
@@ -38,6 +40,9 @@ public class ImageUploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mToken = getIntent().getExtras().getString("token");
         setContentView(R.layout.activity_image_upload);
+
+        mTitleText = (EditText) findViewById(R.id.mImageTitleTextField);
+        mDescriptionText = (EditText) findViewById(R.id.mDescriptionTextField);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.uploadToolbar);
         setSupportActionBar(toolbar);
@@ -64,7 +69,9 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     public void uploadImage(View v) {
         Log.d(TAG,"upload");
-        new HttpUpload(this,mToken,mCurrentPhotoPath,"test title","this is test description",photoFile).execute();
+        String title = mTitleText.getText().toString();
+        String desc = mDescriptionText.getText().toString();
+        new HttpUpload(this,mToken,mCurrentPhotoPath,title,desc,photoFile).execute();
     }
 
     private void getPermissions() {
@@ -149,9 +156,6 @@ public class ImageUploadActivity extends AppCompatActivity {
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
