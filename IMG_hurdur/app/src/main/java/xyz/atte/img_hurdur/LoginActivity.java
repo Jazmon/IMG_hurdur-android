@@ -3,25 +3,21 @@ package xyz.atte.img_hurdur;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,30 +45,24 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
+ * <br>
+ * Mostly an auto-generated activity.
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    private static final String TAG = "LoginActivity";
-
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -85,9 +75,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private String mUrl;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         mUrl = getResources().getString(R.string.host_name);
         setContentView(R.layout.activity_login);
@@ -111,7 +103,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: ");
                 attemptLogin();
             }
         });
@@ -120,6 +111,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
     }
 
+    /**
+     * Populates the autocomplete
+     */
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -128,6 +122,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         getLoaderManager().initLoader(0, null, this);
     }
 
+    /**
+     * Checks if able to request contacts
+     *
+     * @return true if was able to
+     */
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -163,14 +162,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        Log.d(TAG, "attemptLogin: ");
         if (mAuthTask != null) {
             return;
         }
@@ -217,15 +214,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /**
+     * Checks if the email is valid
+     *
+     * @param email the email to check
+     * @return true if valid email
+     */
     private boolean isEmailValid(String email) {
-        Log.d(TAG, "isEmailValid: ");
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
+    /**
+     * Checks if the password is valid
+     *
+     * @param password the password to check
+     * @return true if valid password
+     */
     private boolean isPasswordValid(String password) {
-        Log.d(TAG, "isPasswordValid: ");
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -234,7 +239,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        Log.d(TAG, "showProgress: ");
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -266,9 +270,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.d(TAG, "onCreateLoader: ");
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
@@ -284,9 +290,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d(TAG, "onLoadFinished: ");
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -297,21 +305,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         addEmailsToAutoComplete(emails);
     }
 
+
+    /**
+     * Changes to main activity
+     */
     public void changeToMain(Bundle bundle) {
-        Log.d(TAG, "changeToMain: ");
         Intent i = new Intent(this, MainActivity.class);
         i.putExtras(bundle);
         startActivity(i);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        Log.d(TAG, "onLoaderReset: ");
 
     }
 
+    /**
+     * Adds emails to autocomplete
+     *
+     * @param emailAddressCollection the collection of emails
+     */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        Log.d(TAG, "addEmailsToAutoComplete: ");
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
@@ -320,7 +337,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -328,7 +344,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         };
 
         int ADDRESS = 0;
-        int IS_PRIMARY = 1;
     }
 
     /**
@@ -336,30 +351,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Bundle> {
-        private final static String TAG = "UserLoginTask";
-        // private ProgressDialog progressDialog;
         private final String mEmail;
         private final String mPassword;
 
         UserLoginTask(String email, String password) {
-            Log.d(TAG, "UserLoginTask: constructor");
             mEmail = email;
             mPassword = password;
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            /*progressDialog = new ProgressDialog(LoginActivity.this);
-            progressDialog.setTitle("Logging in");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Please wait while you're being logged in");
-            progressDialog.setCancelable(false);
-            progressDialog.show();*/
-        }
-
+        /**
+         * Creates a query
+         */
         private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException {
-            Log.d(TAG, "getQuery");
             StringBuilder result = new StringBuilder();
             boolean first = true;
 
@@ -377,10 +380,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return result.toString();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Bundle doInBackground(Void... params) {
-            Log.d(TAG, "doInBackground: ");
-
             URL url = null;
             try {
                 url = new URL(mUrl + "/auth/login");
@@ -407,17 +411,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 String query = getQuery(postData);
-                Log.d(TAG, "doInBackground: getQuery: " + query);
                 writer.write(query);
                 writer.flush();
                 writer.close();
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                Log.d(TAG, "doInBackground: responseCode: " + responseCode);
 
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    Log.d(TAG, "doInBackground: respcode was Ok");
+                if (responseCode == HttpURLConnection.HTTP_OK) {
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     while ((line = br.readLine()) != null) {
@@ -434,26 +435,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     data.putString("token", token);
                     data.putInt("expiresIn", expiresIn);
                     return data;
-
-                } else {
-                    Log.d(TAG, "doInBackground: response was not ok");
-                    response = "";
-
                 }
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
 
-            Log.d(TAG, response);
             return data;
-
-            // TODO: register the new account here.
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(final Bundle data) {
-            Log.d(TAG, "onPostExecute");
             mAuthTask = null;
             showProgress(false);
 
@@ -465,9 +460,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onCancelled() {
-            Log.d(TAG, "onCancelled");
             mAuthTask = null;
             showProgress(false);
         }

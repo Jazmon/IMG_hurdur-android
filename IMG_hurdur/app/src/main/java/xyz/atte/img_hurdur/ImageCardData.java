@@ -2,10 +2,12 @@ package xyz.atte.img_hurdur;
 
 import android.graphics.Bitmap;
 
-import java.net.URL;
-
 /**
- * Created by Atte on 20.4.2016.
+ * Model for image card's data
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class ImageCardData {
     protected Bitmap image;
@@ -24,6 +26,5 @@ public class ImageCardData {
     }
 
     public ImageCardData() {
-
     }
 }

@@ -31,8 +31,14 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 
+/**
+ * The fragment that displays the image cards
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
+ */
 public class BrowseFragment extends Fragment {
-    private static final String TAG = "BrowseFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -45,13 +51,10 @@ public class BrowseFragment extends Fragment {
 
     /**
      * {@inheritDoc}
-     *
-     * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
         mUrl = getResources().getString(R.string.host_name);
         initDataSet();
     }
@@ -60,7 +63,6 @@ public class BrowseFragment extends Fragment {
      * Calls the async task to refresh image cards
      */
     private void refreshItems() {
-        Log.d(TAG, "refreshItems");
         // Load items
         new GetImagesTask().execute((Void) null);
         // Load complete
@@ -73,26 +75,24 @@ public class BrowseFragment extends Fragment {
     private void onItemsLoadComplete() {
         // Update the adapter and notify data set changed
         mImageCardDataList.clear();
-        Log.d(TAG, "onItemsLoadComplete");
 
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     /**
+     * Creates the recyclerview / swipe refresh layouts
+     * <br>
      * {@inheritDoc}
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
-        rootView.setTag(TAG);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d(TAG, "onRefresh");
                 refreshItems();
             }
         });
@@ -112,7 +112,6 @@ public class BrowseFragment extends Fragment {
      * Gets the images from the server
      */
     private void initDataSet() {
-        Log.d(TAG, "initDataSet");
         mImageCardDataList = new LinkedList<>();
         new GetImagesTask().execute((Void) null);
     }
@@ -155,8 +154,6 @@ public class BrowseFragment extends Fragment {
          */
         @Override
         protected void onPostExecute(Bitmap result) {
-            Log.d(TAG, String.valueOf(index) + "@ onPostExecute");
-            Log.d(TAG, String.valueOf(mImageCardDataList.size()));
             mImageCardDataList.get(index).image = result;
             mAdapter.notifyItemChanged(index);
             mAdapter.notifyDataSetChanged();
@@ -167,7 +164,6 @@ public class BrowseFragment extends Fragment {
      * Gets the images
      */
     private class GetImagesTask extends AsyncTask<Void, Void, List<ImageCardData>> {
-        private static final String TAG = "GetImagesTask";
         private String mAuthHeader;
 
 
@@ -182,9 +178,16 @@ public class BrowseFragment extends Fragment {
             mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
         }
 
+        /**
+         * Gets images from the api server
+         * <br>
+         * {@inheritDoc}
+         *
+         * @param params
+         * @return
+         */
         @Override
         protected List<ImageCardData> doInBackground(Void... params) {
-            Log.v(TAG, "doInBackground");
             List<ImageCardData> list = new LinkedList<>();
             URL url = null;
             try {
@@ -200,18 +203,14 @@ public class BrowseFragment extends Fragment {
                 conn.setConnectTimeout(15_000);
                 conn.setRequestMethod("GET");
                 conn.addRequestProperty("Authorization", mAuthHeader);
-                Log.d(TAG, "doInBackground: mAuthHeader:" + mAuthHeader);
                 int responseCode = conn.getResponseCode();
-                Log.d(TAG, "doInBackground: responseCode: " + responseCode);
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    Log.d(TAG, "doInBackground: respcode was Ok");
                     String line;
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     while ((line = br.readLine()) != null) {
                         response += line;
                     }
-                    Log.d(TAG, "response: " + response);
 
                     JSONArray jsonArray = new JSONArray(response);
 
@@ -229,10 +228,8 @@ public class BrowseFragment extends Fragment {
                         list.add(cardData);
                     }
 
-
                     return list;
                 } else {
-                    Log.d(TAG, "doInBackground: response was not ok");
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
@@ -241,6 +238,12 @@ public class BrowseFragment extends Fragment {
         }
 
 
+        /**
+         * Creates requests for each image object to the server to get the actual image.
+         * Notifies the recyclerview's adapter the data has changed
+         * <br>
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(List<ImageCardData> list) {
             super.onPostExecute(list);

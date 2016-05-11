@@ -3,13 +3,20 @@ package xyz.atte.img_hurdur;
 import java.util.List;
 
 /**
- * Created by Atte on 27.4.2016.
+ * The model for comment data
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class CommentData {
     protected String comment;
     protected String id;
     protected String userName;
 
+    /**
+     * Child comments (not used)
+     */
     protected List<CommentData> children;
 
     public CommentData(String comment, String id, String userName, List<CommentData> children) {
@@ -20,7 +27,6 @@ public class CommentData {
     }
 
     public CommentData() {
-
     }
 
     @Override

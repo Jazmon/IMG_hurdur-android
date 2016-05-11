@@ -1,6 +1,5 @@
 package xyz.atte.img_hurdur;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,7 +34,11 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Created by Atte on 27.4.2016.
+ * Fragment that contains comments for a image
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class CommentsFragment extends Fragment {
     private static final String TAG = "CommentsView";
@@ -48,28 +50,27 @@ public class CommentsFragment extends Fragment {
     private ArrayList<CommentData> mCommentsDataList;
     CommentsAdapter adapter;
 
-
     private ListView mListView;
 
     public CommentsFragment() {
-
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
-
+    /**
+     * Shows the back button and loads the comments
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
-        ((MainActivity)getActivity()).showBackButton();
+        Log.d(TAG, "onResume");
+        ((MainActivity) getActivity()).showBackButton();
         getCommentsFromServer();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,32 +82,38 @@ public class CommentsFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Gets the comments from the server
+     */
     protected void getCommentsFromServer() {
         new GetCommentsTask().execute();
     }
 
+    /**
+     * Posts a comment to the server
+     */
     protected void postCommentToServer() {
         comment = commentText.getText().toString();
-        Log.d(TAG,"COMMENT:" + comment);
+        Log.d(TAG, "COMMENT:" + comment);
         new PostCommentTask().execute();
     }
 
 
-
-
-
-
-
+    /**
+     * Creates the view
+     * {@inheritDoc}
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
 
         ((MainActivity)getActivity()).showBackButton();
 
+
         super.onViewCreated(view, savedInstanceState);
         mListView = (ListView) view.findViewById(R.id.commentListView);
 
-        adapter = new CommentsAdapter(getActivity(),mCommentsDataList);
+        adapter = new CommentsAdapter(getActivity(), mCommentsDataList);
         mListView.setAdapter(adapter);
 
         commentText = (EditText) view.findViewById(R.id.userCommentText);
@@ -115,24 +122,27 @@ public class CommentsFragment extends Fragment {
         title.setText(args.getString("title"));
 
 
-
         Button button = (Button) view.findViewById(R.id.postCommentButton);
-        button.setOnClickListener(new View.OnClickListener()
-        {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 postCommentToServer();
             }
         });
 
     }
 
+    /**
+     * Initializes the data set
+     */
     private void initDataSet() {
         mCommentsDataList = new ArrayList<>();
 
     }
 
+    /**
+     *
+     */
     private class PostCommentTask extends AsyncTask<Void, Void, Void> {
         private String mAuthHeader = "Bearer ";
 
@@ -142,6 +152,7 @@ public class CommentsFragment extends Fragment {
             super.onPreExecute();
             mAuthHeader = "Bearer " + ((MainActivity) getActivity()).mToken;
         }
+
         @Override
         protected Void doInBackground(Void... params) {
             URL url = null;
@@ -165,10 +176,10 @@ public class CommentsFragment extends Fragment {
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-                String query = URLEncoder.encode("text","UTF-8");
-                query += "=" + URLEncoder.encode(comment,"UTF-8");
+                String query = URLEncoder.encode("text", "UTF-8");
+                query += "=" + URLEncoder.encode(comment, "UTF-8");
 
-                Log.d(TAG,"QUERY:" + query);
+                Log.d(TAG, "QUERY:" + query);
                 writer.write(query);
                 writer.flush();
                 writer.close();
@@ -189,7 +200,7 @@ public class CommentsFragment extends Fragment {
                     Log.d(TAG, "doInBackground: response was not ok");
 
                 }
-            } catch (IOException  e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -281,6 +292,7 @@ public class CommentsFragment extends Fragment {
             adapter.clear();
             for(int i = 0; i < list.size(); i++) {
                 mCommentsDataList.add(new CommentData(list.get(i),imageID,"Anon",null));
+
             }
 
             adapter.notifyDataSetChanged();

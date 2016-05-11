@@ -10,13 +10,22 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by MikkoEPIC on 4.5.2016.
+ * Adapter for comments
+ *
+ * @author Atte Huhtakangas
+ * @author Mikko Tossavainen
+ * @version 1.0
  */
 public class CommentsAdapter extends ArrayAdapter<CommentData> {
     public CommentsAdapter(Context context, ArrayList<CommentData> data) {
         super(context, 0, data);
     }
 
+    /**
+     * Populate the view
+     * <br>
+     * {@inheritDoc}
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
