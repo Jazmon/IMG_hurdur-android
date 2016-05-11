@@ -62,6 +62,7 @@
         android:layout_below="@+id/mImageTitleTextField"
         android:layout_alignStart="@+id/mUploadImageButton" />
 
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +80,8 @@
         android:ems="10"
         android:id="@+id/mImageTitleTextField"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/mDescriptionTextField" />
+        android:layout_alignStart="@+id/mDescriptionTextField"
+        android:hint="Name"/>
 
 </RelativeLayout>
 
